@@ -100,6 +100,7 @@ def draw_shoot(player, ligne, colonne, hit=False):
         color = RED
     # dessine le cercle sur la grille
     pygame.draw.circle(grid, color, center, radius)
+    display()
     
 
 def draw_boat(player, ligne, colonne, longueur, horizontal=True):
@@ -121,6 +122,7 @@ def draw_boat(player, ligne, colonne, longueur, horizontal=True):
     rect = pygame.Rect(x, y, l, w)
     # dessine le rectangle sur la grille
     pygame.draw.rect(grid, GREY, rect)
+    display()
 
 
 def init():

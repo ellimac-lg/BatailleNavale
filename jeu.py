@@ -7,8 +7,9 @@ Created on Sat Oct 12 15:54:46 2024
 """
 import time
 import affichage
+import random
 
-DEBUG = True
+DEBUG = False
 
 ### init
 
@@ -81,38 +82,97 @@ if DEBUG:
     affichage.draw_boat(affichage.COMPUTER, *boat3)
 #time.sleep(1)
 
+#
+user_hits = 0
+computer_hits = 0
 
-
-# shoot phase
-while True:
-    already_played = True
-    while already_played == True:
-        click = affichage.choose_shoot()
-        print(click)
-        if computer_grid [ click[0]-1 ] [ click[1]-1 ] == "X":
-            already_played == True
-        else: 
-            already_played == False
+try:
     
-    computer_grid [ click[0]-1 ] [ click[1]-1 ] = "X"
+    # shoot phase
+    while (user_hits < 9) and (computer_hits < 9):
+        
+        # User joue
+        already_played = True
+        while already_played == True:
+            click = affichage.choose_shoot()
+            print(click)
+            if computer_grid [ click[0]-1 ] [ click[1]-1 ] == "X":
+                already_played = True
+                print("already played")
+            else: 
+                already_played = False
+        
+        computer_grid [ click[0]-1 ] [ click[1]-1 ] = "X"
+        print("hop 1")
+        hit = False
+        for boat in computer_boats:
+            hit = in_boat(boat, click[0], click[1]) 
+            if hit == True:
+                print("Touché")   
+                user_hits = user_hits + 1
+                coordinates = boat_coordinates(boat)
+                sinked = True
+                for coord in coordinates:
+                    if computer_grid [coord[0]-1][coord[1]-1] == 'O':
+                        sinked = False
+                if sinked == True:
+                    print("Touché coulé")   
+                    affichage.draw_boat(affichage.COMPUTER, *boat)
+                    #TODO : affiché hit rouge sur bateau coulé
+                    for coord in coordinates:
+                        affichage.draw_shoot(affichage.COMPUTER, coord[0], coord[1], True)
+                break
+        print(f"affichage shoot user en {click}")
+        affichage.draw_shoot(affichage.COMPUTER, click[0], click[1], hit)
+        
+        # computer joue
+        time.sleep(1)
+        already_played = True
+        while already_played == True:
+            click = (random.randint(1, 10) , random.randint(1, 10))
+            print(click)
+            if user_grid [ click[0]-1 ] [ click[1]-1 ] == "X":
+                already_played = True
+            else: 
+                already_played = False
+        
+        user_grid [ click[0]-1 ] [ click[1]-1 ] = "X"
+        
+        hit = False
+        for boat in user_boats:
+            hit = in_boat(boat, click[0], click[1]) 
+            if hit == True:
+                print("Touché")  
+                computer_hits = computer_hits  + 1
+                coordinates = boat_coordinates(boat)
+                sinked = True
+                for coord in coordinates:
+                    if user_grid [coord[0]-1][coord[1]-1] == 'O':
+                        sinked = False
+                if sinked == True:
+                    print("Touché coulé")   
     
-    hit = False
-    for boat in computer_boats:
-        hit = in_boat(boat, click[0], click[1]) 
-        if hit == True:
-            break
-    affichage.draw_shoot(affichage.COMPUTER, click[0], click[1], hit)
+                break
+        print(f"affichage shoot computer en {click}")
+        affichage.draw_shoot(affichage.USER, click[0], click[1], hit)
+        
+        
+        
+        # TODO: verifie si user gagne
+        
+        # TODO computer joue
+        
+    if user_hits == 9:
+        print("USER GAGNE !!!!!")
+    if computer_hits == 9:
+        print("COMPUTER GAGNE !!!!!")
     
-    # TODO: verifie si bateau coulé
-    # TODO: verifie si user gagne
+    affichage.end()
     
-    # TODO computer joue
+except Exception as e:
+    affichage.end()
+    raise e
     
-    
-    
-
-affichage.end()
-
 
 
 
