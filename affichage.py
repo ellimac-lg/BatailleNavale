@@ -153,6 +153,7 @@ boat_nb = 0
 
 def choose_boat():
     "let the user place a boat on grid1"
+    # TODO: liste fixe pour le moment
     global boat_nb
     boat = TEST_BOAT[boat_nb % len(TEST_BOAT)]
     boat_nb = boat_nb + 1 
@@ -197,6 +198,8 @@ def display():
     screen.blit(grid1, grid1_rect)
     screen.blit(grid2, grid2_rect)
     
+    # TODO: affichage d'un texte
+    
     # Affichage sur l'écran
     pygame.display.update()
     
@@ -205,7 +208,7 @@ def display():
  
 def end():
     pygame.quit()
-    sys.exit()
+    #sys.exit()
     
 
 ### TESTS    
