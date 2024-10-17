@@ -48,8 +48,25 @@ def in_boat (boat, ligne, colonne):
 def check_boat (new_boat, boats):
     "vérifie qu'un bateaux ne se chevauchent pas les autres et que sa longueur n'est pas déjà utilisée"
     # TODO: a coder
-    # check dans grid
     # check pas de croisements des bateaux
+    new_boat_coords = boat_coordinates(new_boat)
+    for each_boat in boats:
+        each_boat_coords = boat_coordinates(each_boat)
+        for nbcoord in new_boat_coords:
+            for ebcoord in each_boat_coords:
+                if nbcoord == ebcoord:
+                    return False
+    
+    # check dans grid
+    (ligne, colonne, longueur, horizontal) = boat
+    if horizontal:
+        if colonne -1 + longueur > 10:
+            return False
+    else:
+        if ligne -1 + longueur > 10:
+            return False
+
+
     # longueurs boats 2.3.4
     return True
 
@@ -57,16 +74,26 @@ def check_boat (new_boat, boats):
 #############################
 ### selection bateaux users #
 #############################
+l2=True
+l3=True
+l4=True
 
 while len(user_boats)<3 :
     # demande au joueur de placer un bateu sur la grille
-    boat = affichage.choose_boat()
+    boat = affichage.choose_boat(l2, l3, l4 )
     print(boat)
     # vérifie si le bateau est valide
     check = check_boat (boat, user_boats)
     if check: # bateau valide
+        if boat[2] == 2:
+            l2 = False
+        if boat[2] == 3:
+            l3 = False
+        if boat[2] == 4:
+            l4 = False
         user_boats.append(boat) # ajout dans la liste
         affichage.draw_boat(affichage.USER, *boat) # affichage
+        #affichage.display(only_user_grid=True)
     #time.sleep(1)
 
 ################################
@@ -74,21 +101,42 @@ while len(user_boats)<3 :
 ################################
 # TODO : randomiser
 
-boat1 = (5,4,3,True)
-computer_boats.append(boat1)
+def random_boat(longueur):
+    ligne = random.randint(1, 10)
+    colonne = random.randint(1, 10)
+    horizontal = (random.randint(0, 1) == 1)
+    return (ligne, colonne, longueur, horizontal)
+    
+check = False
+while check == False:
+    
+    boat4 = random_boat(4)
+    check = check_boat(boat4, computer_boats)
+    if check:
+        computer_boats.append(boat4)
+        
+check = False
+while check == False:
+    
+    boat3 = random_boat(3)
+    check = check_boat(boat3, computer_boats)
+    if check:
+        computer_boats.append(boat3)
+        
+check = False
+while check == False:
+    
+    boat2 = random_boat(2)
+    check = check_boat(boat2, computer_boats)
+    if check:
+        computer_boats.append(boat2)
+
 if DEBUG:
-    affichage.draw_boat(affichage.COMPUTER, *boat1)
-#time.sleep(1)
-boat2 = (2,1,4,True)
-computer_boats.append(boat2)
-if DEBUG:
-    affichage.draw_boat(affichage.COMPUTER, *boat2)
-#time.sleep(1)
-boat3 = (7,8,2,False)
-computer_boats.append(boat3)
-if DEBUG:
+    affichage.draw_boat(affichage.COMPUTER, *boat4)
     affichage.draw_boat(affichage.COMPUTER, *boat3)
-#time.sleep(1)
+    affichage.draw_boat(affichage.COMPUTER, *boat2)
+    
+
 
 # nombre de touchés
 user_hits = 0

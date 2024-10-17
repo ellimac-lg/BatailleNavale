@@ -122,7 +122,7 @@ def draw_boat(player, ligne, colonne, longueur, horizontal=True):
     rect = pygame.Rect(x, y, l, w)
     # dessine le rectangle sur la grille
     pygame.draw.rect(grid, GREY, rect)
-    display()
+    #display()
 
 
 def init():
@@ -151,14 +151,119 @@ def init():
 TEST_BOAT = [ (1,2, 4, True), (4,6, 3, False), (7,8, 2, True)]
 boat_nb = 0
 
-def choose_boat():
+def choose_boat(l2=True, l3=True, l4=True):
     "let the user place a boat on grid1"
     # TODO: liste fixe pour le moment
-    global boat_nb
-    boat = TEST_BOAT[boat_nb % len(TEST_BOAT)]
-    boat_nb = boat_nb + 1 
-    display()
-    return boat
+    
+    ligne = 0
+    colonne = 0
+    longueur = 0
+    horizontal = None
+    
+    # rectangle a dessiner
+    rectv4 = pygame.Rect( grid2_rect.x, grid2_rect.y, BLOCK_SIZE, BLOCK_SIZE*4)
+    rectv3 = pygame.Rect( grid2_rect.x+BLOCK_SIZE*2, grid2_rect.y, BLOCK_SIZE, BLOCK_SIZE*3)
+    rectv2 = pygame.Rect( grid2_rect.x+BLOCK_SIZE*4, grid2_rect.y, BLOCK_SIZE, BLOCK_SIZE*2)
+    recth4 = pygame.Rect( grid2_rect.x, grid2_rect.y+BLOCK_SIZE*5, BLOCK_SIZE*4, BLOCK_SIZE)
+    recth3 = pygame.Rect( grid2_rect.x, grid2_rect.y+BLOCK_SIZE*7, BLOCK_SIZE*3, BLOCK_SIZE)
+    recth2 = pygame.Rect( grid2_rect.x, grid2_rect.y+BLOCK_SIZE*9, BLOCK_SIZE*2, BLOCK_SIZE)
+    
+    while True:
+        
+
+        # dessine le rectangle sur la grille
+        if l4: pygame.draw.rect(screen, GREY, rectv4)
+        if l3: pygame.draw.rect(screen, GREY, rectv3)
+        if l2: pygame.draw.rect(screen, GREY, rectv2)
+        if l4: pygame.draw.rect(screen, GREY, recth4)
+        if l3: pygame.draw.rect(screen, GREY, recth3)
+        if l2: pygame.draw.rect(screen, GREY, recth2)
+        
+        # pour capturer les événements
+        for event in pygame.event.get():
+            # fermer la fenetre
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            # evenement click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: # bouton gauch
+                    (x, y) = event.pos # coordonnées du click
+                    print(f"Click en x: {x} et y: {y}")
+                    if l4 and rectv4.collidepoint(x, y):
+                        longueur = 4
+                        horizontal = False
+                        selected_rect = rectv4
+                    if l3 and rectv3.collidepoint(x, y):
+                        longueur = 3
+                        horizontal = False
+                        selected_rect = rectv3
+                    if l2 and rectv2.collidepoint(x, y):
+                        longueur = 2
+                        horizontal = False
+                        selected_rect = rectv2
+                    if l4 and recth4.collidepoint(x, y):
+                        longueur = 4
+                        horizontal = True
+                        selected_rect = recth4
+                    if l3 and recth3.collidepoint(x, y):
+                        longueur = 3
+                        horizontal = True
+                        selected_rect = recth3
+                    if l2 and recth2.collidepoint(x, y):
+                        longueur = 2
+                        horizontal = True
+                        selected_rect = recth2
+                 
+        if longueur != 0:
+            break
+        # affichage des grille
+        display(only_user_grid=True)
+        
+    print(f"forme bateau longueur:{longueur} horizontal:{horizontal}")
+        
+    while True:
+        
+
+        # dessine le rectangle sur la grille
+        if l4: pygame.draw.rect(screen, GREY, rectv4)
+        if l3: pygame.draw.rect(screen, GREY, rectv3)
+        if l2: pygame.draw.rect(screen, GREY, rectv2)
+        if l4: pygame.draw.rect(screen, GREY, recth4)
+        if l3: pygame.draw.rect(screen, GREY, recth3)
+        if l2: pygame.draw.rect(screen, GREY, recth2) 
+        pygame.draw.rect(screen, RED, selected_rect, 2)
+        
+        # pour capturer les événements
+        for event in pygame.event.get():
+            # fermer la fenetre
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            # evenement click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: # bouton gauch
+                    (x, y) = event.pos # coordonnées du click
+                    print(f"Click en x: {x} et y: {y}")
+                    
+                    # conversion des coordonnées en ligne, colonne de la grille 1
+                    colonne = int((x-grid1_rect.x)/BLOCK_SIZE)
+                    ligne = int((y-grid1_rect.y)/BLOCK_SIZE)
+                    print(f"Click en ligne: {ligne} et colonne: {colonne}")
+                    # est ce que le clique est bien dans la grille 2
+        if (colonne>=1) and (colonne<=10) and (ligne>=1) and(ligne<=10):
+            # terminé, on renvoie le résultat
+            break
+                 
+        # affichage des grille
+        display(only_user_grid=True)
+        
+    return (ligne, colonne, longueur, horizontal)
+    # global boat_nb
+    # boat = TEST_BOAT[boat_nb % len(TEST_BOAT)]
+    # boat_nb = boat_nb + 1 
+    # display()
+    #return boat
     
 
 def choose_shoot():
@@ -189,14 +294,13 @@ def choose_shoot():
         display()
     
     
-def display():
+def display(only_user_grid=False):
     "Affichage des grille"
-    # re-initialiser l' écran
-    screen.fill(BLACK)
     
     # afficher les grille
     screen.blit(grid1, grid1_rect)
-    screen.blit(grid2, grid2_rect)
+    if only_user_grid == False: 
+        screen.blit(grid2, grid2_rect)
     
     # TODO: affichage d'un texte
     
@@ -205,6 +309,9 @@ def display():
     
     # Ensure program maintains a rate
     clock.tick(30)
+    
+    # re-initialiser l' écran
+    screen.fill(BLACK)
  
 def end():
     pygame.quit()
@@ -216,26 +323,34 @@ def end():
 def test():
     init() 
     
-    draw_boat(USER, 6, 6, 4)
-    draw_boat(COMPUTER, 2, 7, 3, False)
-    draw_shoot(USER, 5, 7)
-    draw_shoot(USER, 2, 4)
-    draw_shoot(COMPUTER, 2, 7, hit=True)
-    
-    click = choose_shoot()
-    print(click)
+    try:    
+        # draw_boat(USER, 6, 6, 4)
+        # draw_boat(COMPUTER, 2, 7, 3, False)
+        # draw_shoot(USER, 5, 7)
+        # draw_shoot(USER, 2, 4)
+        # draw_shoot(COMPUTER, 2, 7, hit=True)
         
-    
-    # while True:
+        # click = choose_shoot()
+        # print(click)
+            
         
-    #     # pour capturer les événements
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             pygame.quit()
-    #             sys.exit()
-     
-    #     display()
+        # while True:
+            
+        #     # pour capturer les événements
+        #     for event in pygame.event.get():
+        #         if event.type == pygame.QUIT:
+        #             pygame.quit()
+        #             sys.exit()
+         
+        #     display()
+            
+        boat = choose_boat()
+        print(boat)
         
+    except:
+        # fermer pygame en cas d'exception
+        end()
+        raise 
     end()
     
 #test()
