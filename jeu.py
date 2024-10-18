@@ -14,16 +14,29 @@ DEBUG = False
 ### init
 
 # grille du joueur
-user_grid = [["O"] * 10 for _ in range(10)]
+user_grid = None
 # grille du computer
-computer_grid = [["O"] * 10 for _ in range(10)]
+computer_grid = None
 # bateaux du joueur
-user_boats = []
+user_boats = None
 # bateaux du computer
-computer_boats = []
+computer_boats = None
 
-affichage.init()
-
+def init():
+    # grille du joueur
+    global user_grid
+    user_grid = [["O"] * 10 for _ in range(10)]
+    # grille du computer
+    global computer_grid
+    computer_grid = [["O"] * 10 for _ in range(10)]
+    # bateaux du joueur
+    global user_boats
+    user_boats = []
+    # bateaux du computer
+    global computer_boats
+    computer_boats = []
+    
+    affichage.init()
 
 def boat_coordinates (boat):
     "retourne un tableau de coordonnéées du bateau"
@@ -68,198 +81,212 @@ def check_boat (new_boat, boats):
     # si tout s'est bien passé jusque là le bateau est valide
     return True
 
-    
-
-################################
-### selection bateaux computer #
-################################
-
-
 def random_boat(longueur):
     "creation aleatoire d'un bateau d'une certaine longueur"
     ligne = random.randint(1, 10)
     colonne = random.randint(1, 10)
     horizontal = (random.randint(0, 1) == 1)
     return (ligne, colonne, longueur, horizontal)
-    
-# creation aleatoire d'un bateau de longueur 4
-check = False
-# tant que le bateau créé n'est pas valide on re-essaie
-while check == False:
-    boat4 = random_boat(4) 
-    check = check_boat(boat4, computer_boats)
-    if check:
-        # si valide on ajoute le bateau dans la liste
-        computer_boats.append(boat4)
+ 
         
-# creation aleatoire d'un bateau de longueur 3
-check = False
-# tant que le bateau créé n'est pas valide on re-essaie
-while check == False:
-    boat3 = random_boat(3)
-    check = check_boat(boat3, computer_boats)
-    if check:
-        # si valide on ajoute le bateau dans la liste
-        computer_boats.append(boat3)
-        
-# creation aleatoire d'un bateau de longueur 2
-check = False
-# tant que le bateau créé n'est pas valide on re-essaie
-while check == False:  
-    boat2 = random_boat(2)
-    check = check_boat(boat2, computer_boats)
-    if check:
-        # si valide on ajoute le bateau dans la liste
-        computer_boats.append(boat2)
-
-# on ne doit pas afficher les bateaux du computer
-# mais on le fait quand même pour debugguer
-if DEBUG:
-    affichage.draw_boat(affichage.COMPUTER, *boat4)
-    affichage.draw_boat(affichage.COMPUTER, *boat3)
-    affichage.draw_boat(affichage.COMPUTER, *boat2)
-    
-#############################
-### selection bateaux users #
-#############################
-l2=True
-l3=True
-l4=True
-
-while len(user_boats)<3 :
-    # demande au joueur de placer un bateu sur la grille
-    boat = affichage.choose_boat(l2, l3, l4)
-    print(boat)
-    # vérifie si le bateau est valide
-    check = check_boat (boat, user_boats)
-    if check: # bateau valide
-        # il ne faut plus selectionner de bateau de cette longueur
-        if boat[2] == 2:
-            l2 = False
-        if boat[2] == 3:
-            l3 = False
-        if boat[2] == 4:
-            l4 = False
-        user_boats.append(boat) # ajout dans la liste
-        affichage.draw_boat(affichage.USER, *boat) # affichage
-        
-
-################################
-### La partie peut commencer   #
-################################
-
-# nombre de touchés
-user_hits = 0
-computer_hits = 0
-
 try:
-    
-    # shoot phase
-    while (user_hits < 9) and (computer_hits < 9):
+    while True:
         
-        #################
-        ### User joue ###
-        #################
-        print("### User joue ###")
-        already_played = True
-        # tant que ce n'est pas un nouveau coup...
-        while already_played == True:
-            # récupère le coup du user
-            coup = affichage.choose_shoot()
-            print(coup)
-            # vérifie si ce coup a déjà été joué
-            if computer_grid [ coup[0]-1 ] [ coup[1]-1 ] == "X":
-                already_played = True
-                print("already played")
-            else: 
-                already_played = False
-        # enregistre le coup dans la grille du computer
-        computer_grid [ coup[0]-1 ] [ coup[1]-1 ] = "X"
+        init()
         
-        # vérifie si touché et coulé
-        hit = False
-        for boat in computer_boats:
-            # vérifie si bateau touché
-            hit = in_boat(boat, coup[0], coup[1]) 
-            if hit == True: # touché
-                print("Touché")   
-                user_hits = user_hits + 1 # arrivé à 9 c'est gagné
-                # vérifie si coulé
-                coordinates = boat_coordinates(boat)
-                sinked = True
-                for coord in coordinates:
-                    if computer_grid [coord[0]-1][coord[1]-1] == 'O':
-                        sinked = False
-                if sinked == True:
-                    print("Coulé")   
-                    # si le bateau est coulé on l 'affiche
-                    affichage.draw_boat(affichage.COMPUTER, *boat)
-                    # il faut réafficher les points rouges sur le bateau coulé
+        ################################
+        ### selection bateaux computer #
+        ################################
+        
+        # creation aleatoire d'un bateau de longueur 4
+        check = False
+        # tant que le bateau créé n'est pas valide on re-essaie
+        while check == False:
+            boat4 = random_boat(4) 
+            check = check_boat(boat4, computer_boats)
+            if check:
+                # si valide on ajoute le bateau dans la liste
+                computer_boats.append(boat4)
+                
+        # creation aleatoire d'un bateau de longueur 3
+        check = False
+        # tant que le bateau créé n'est pas valide on re-essaie
+        while check == False:
+            boat3 = random_boat(3)
+            check = check_boat(boat3, computer_boats)
+            if check:
+                # si valide on ajoute le bateau dans la liste
+                computer_boats.append(boat3)
+                
+        # creation aleatoire d'un bateau de longueur 2
+        check = False
+        # tant que le bateau créé n'est pas valide on re-essaie
+        while check == False:  
+            boat2 = random_boat(2)
+            check = check_boat(boat2, computer_boats)
+            if check:
+                # si valide on ajoute le bateau dans la liste
+                computer_boats.append(boat2)
+        
+        # on ne doit pas afficher les bateaux du computer
+        # mais on le fait quand même pour debugguer
+        if DEBUG:
+            affichage.draw_boat(affichage.COMPUTER, *boat4)
+            affichage.draw_boat(affichage.COMPUTER, *boat3)
+            affichage.draw_boat(affichage.COMPUTER, *boat2)
+            
+        #############################
+        ### selection bateaux users #
+        #############################
+        
+        affichage.set_text('Bienvenue, choisis et place tes navire  ')
+        
+        l2=True
+        l3=True
+        l4=True
+        
+        while len(user_boats)<3 :
+            # demande au joueur de placer un bateu sur la grille
+            boat = affichage.choose_boat(l2, l3, l4)
+            print(boat)
+            # vérifie si le bateau est valide
+            check = check_boat (boat, user_boats)
+            if check: # bateau valide
+                # il ne faut plus selectionner de bateau de cette longueur
+                if boat[2] == 2:
+                    l2 = False
+                if boat[2] == 3:
+                    l3 = False
+                if boat[2] == 4:
+                    l4 = False
+                user_boats.append(boat) # ajout dans la liste
+                affichage.draw_boat(affichage.USER, *boat) # affichage
+        
+        ################################
+        ### La partie peut commencer   #
+        ################################
+        
+        messages_dans_leau = ["dans l'eau...",
+                              "ah ça pour faire des vagues...",
+                              "mais ya rien là !",
+                              "peux mieux faire",
+                              "plouf...",
+                              "un coup pour rien",
+                              "splash stratégique !",
+                              "un tir à la mer !",
+                              "bof...",
+                              "Eau mon Dieu"]
+        
+        # nombre de touchés
+        user_hits = 0
+        computer_hits = 0
+        
+        affichage.set_text('Tire sur la grille de droite ')
+        
+        # shoot phase
+        while (user_hits < 9) and (computer_hits < 9):
+            
+            ###############
+            ### User joue #
+            ###############
+            print("### User joue ###")
+            already_played = True
+            # tant que ce n'est pas un nouveau coup...
+            while already_played == True:
+                # récupère le coup du user
+                coup = affichage.choose_shoot()
+                print(coup)
+                # vérifie si ce coup a déjà été joué
+                if computer_grid [ coup[0]-1 ] [ coup[1]-1 ] == "X":
+                    already_played = True
+                    affichage.set_text('Tu as déjà tiré ici... ')
+                else: 
+                    already_played = False
+            # enregistre le coup dans la grille du computer
+            computer_grid [ coup[0]-1 ] [ coup[1]-1 ] = "X"
+            
+            # vérifie si touché et coulé
+            hit = False
+            for boat in computer_boats:
+                # vérifie si bateau touché
+                hit = in_boat(boat, coup[0], coup[1]) 
+                if hit == True: # touché
+                    affichage.set_text('Touché !') 
+                    user_hits = user_hits + 1 # arrivé à 9 c'est gagné
+                    # vérifie si coulé
+                    coordinates = boat_coordinates(boat)
+                    sinked = True
                     for coord in coordinates:
-                        affichage.draw_shoot(affichage.COMPUTER, coord[0], coord[1], True)
-                break
-        # afficher le coup sur la grille du computer (en rouge si c'est un hit)
-        affichage.draw_shoot(affichage.COMPUTER, coup[0], coup[1], hit)
+                        if computer_grid [coord[0]-1][coord[1]-1] == 'O':
+                            sinked = False
+                    if sinked == True:
+                        affichage.set_text('Touché Coulé ! ') 
+                        # si le bateau est coulé on l 'affiche
+                        affichage.draw_boat(affichage.COMPUTER, *boat)
+                        # il faut réafficher les points rouges sur le bateau coulé
+                        for coord in coordinates:
+                            affichage.draw_shoot(affichage.COMPUTER, coord[0], coord[1], True)
+                    break
+                else: affichage.set_text(messages_dans_leau[random.randint(0, len(messages_dans_leau)-1)])
+            # afficher le coup sur la grille du computer (en rouge si c'est un hit)
+            affichage.draw_shoot(affichage.COMPUTER, coup[0], coup[1], hit)
+            
+            time.sleep(1) # petit temps d'attente
+            
+            #################
+            # computer joue #
+            #################
+            print("### Computer joue ###")
+            already_played = True
+            # tant que ce n'est pas un nouveau coup...
+            while already_played == True:
+                # le computer joue qu hasard coup 
+                coup = (random.randint(1, 10) , random.randint(1, 10))
+                print(coup)
+                # vérifie si ce coup a déjà été joué
+                if user_grid [ coup[0]-1 ] [ coup[1]-1 ] == "X":
+                    already_played = True
+                else: 
+                    already_played = False
+            # enregistre le coup dans la grille du user
+            user_grid [ coup[0]-1 ] [ coup[1]-1 ] = "X"
+            
+            # vérifie si touché et coulé
+            hit = False
+            for boat in user_boats:
+                # vérifie si bateau touché
+                hit = in_boat(boat, coup[0], coup[1]) 
+                if hit == True:
+                    affichage.set_text('Aïe ! ') 
+                    computer_hits = computer_hits  + 1 # arrivé à 9 c'est gagné
+                    # vérifie si coulé
+                    coordinates = boat_coordinates(boat)
+                    sinked = True
+                    for coord in coordinates:
+                        if user_grid [coord[0]-1][coord[1]-1] == 'O':
+                            sinked = False
+                    if sinked == True:
+                        affichage.set_text('Aïe Aïe Aïe !! ') 
+                    break
+            # afficher le coup sur la grille du computer (en rouge si c'est un hit)
+            affichage.draw_shoot(affichage.USER, coup[0], coup[1], hit)
+            
+            
+        # vérifie qui a gagné
+        if user_hits == 9:
+            affichage.set_text('Félicitations ! tu as gagné ! ')
+        if computer_hits == 9:
+            affichage.set_text('Dommage, tu as perdu ... ')
+        affichage.display()
         
-        time.sleep(1) # petit temps d'attente
-        
-        #################
-        # computer joue #
-        #################
-        print("### Computer joue ###")
-        already_played = True
-        # tant que ce n'est pas un nouveau coup...
-        while already_played == True:
-            # le computer joue qu hasard coup 
-            coup = (random.randint(1, 10) , random.randint(1, 10))
-            print(coup)
-            # vérifie si ce coup a déjà été joué
-            if user_grid [ coup[0]-1 ] [ coup[1]-1 ] == "X":
-                already_played = True
-            else: 
-                already_played = False
-        # enregistre le coup dans la grille du user
-        user_grid [ coup[0]-1 ] [ coup[1]-1 ] = "X"
-        
-        # vérifie si touché et coulé
-        hit = False
-        for boat in user_boats:
-            # vérifie si bateau touché
-            hit = in_boat(boat, coup[0], coup[1]) 
-            if hit == True:
-                print("Touché")  
-                computer_hits = computer_hits  + 1 # arrivé à 9 c'est gagné
-                # vérifie si coulé
-                coordinates = boat_coordinates(boat)
-                sinked = True
-                for coord in coordinates:
-                    if user_grid [coord[0]-1][coord[1]-1] == 'O':
-                        sinked = False
-                if sinked == True:
-                    print("Coulé")   
-                break
-        # afficher le coup sur la grille du computer (en rouge si c'est un hit)
-        affichage.draw_shoot(affichage.USER, coup[0], coup[1], hit)
-        
-        
-    # vérifie qui a gagné
-    if user_hits == 9:
-        print("USER GAGNE !!!!!")
-    if computer_hits == 9:
-        print("COMPUTER GAGNE !!!!!")
-    # TODO afficher le gagant à l'écran
-    
-    # TODO: Reset button
-    
-    # TODO: afficher des textes au long du jeu
-    
-    affichage.end()
-    
+        # bouton reset
+        affichage.reset()
+  
 except:
     # fermer pygame en cas d'exception
     affichage.end()
-    raise 
-    
+    raise
+
 
 
 

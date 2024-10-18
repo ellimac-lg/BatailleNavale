@@ -9,19 +9,24 @@ Created on Mon Oct  7 18:42:17 2024
 import pygame
 import sys
 
+# réglages affichage
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 BLOCK_SIZE = 40
 
+# couleurs
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 BLUE = (0,0,255)
 RED = (255,0,0)
 GREY = (120,120,120)
+GREEN = (1, 215, 88)
 
+# designation des joueurs
 USER = "user"
 COMPUTER = "COMPUTER"
 
+#initialisation
 pygame.init()
 
 # Setup the clock for a decent framerate
@@ -30,20 +35,18 @@ clock = pygame.time.Clock()
 #surface de fenetre/taille
 screen = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
 
-# # creation image
-# button = pygame.Surface((10, 5))
-# button.fill('green')
-# # position de l'image
-# button_rect = button.get_rect()   #pygame.Rect(30, 50, 10, 5)
-# button_rect.x = 50
-
-
+#variables globales
+# texte qui s'affiche sur la fenêtre
+text = ""
+font_text = pygame.font.SysFont(None, BLOCK_SIZE) # police d'écriture
+# grilles
 grid1 = None
 grid2 = None
 grid1_rect = None
 grid2_rect = None
 
 def get_grid(player):
+    "donne la grille du player"
     if player == USER: return grid1
     if player == COMPUTER: return grid2
     end()
@@ -52,7 +55,7 @@ def create_grid():
     " creation d une grille vierge"
     
     grid_size = BLOCK_SIZE*11
-    # surfqce grille
+    # surface grille
     grid = pygame.Surface((grid_size, grid_size))
     
     #tracé de la grille
@@ -122,8 +125,7 @@ def draw_boat(player, ligne, colonne, longueur, horizontal=True):
     rect = pygame.Rect(x, y, l, w)
     # dessine le rectangle sur la grille
     pygame.draw.rect(grid, GREY, rect)
-    #display()
-
+    
 
 def init():
     
@@ -131,6 +133,7 @@ def init():
     global grid2
     global grid1_rect 
     global grid2_rect 
+    global text
     
     # creation des grilles
     grid1 = create_grid()
@@ -146,10 +149,8 @@ def init():
     grid2_rect.x = 550
     grid2_rect.y = 50
 
+    text = ""
 
-# fonction bidon pour le placement des bateaux
-TEST_BOAT = [ (1,2, 4, True), (4,6, 3, False), (7,8, 2, True)]
-boat_nb = 0
 
 def choose_boat(l2=True, l3=True, l4=True):
     "let the user place a boat on grid1"
@@ -289,7 +290,48 @@ def choose_shoot():
         
         # affichage des grille
         display()
+
+def reset():
+    " display the grids and waits for a click in reset button"
+
+    # affichage d'un texte
+    texte_surf = font_text.render( "reset" , True, WHITE) # surface texte
+    # rect pour plqcer le texte dqns lq grille
+    texte_rect = texte_surf.get_rect()
+    texte_rect.x = grid2_rect.centerx
+    texte_rect.y = grid2_rect.bottom + BLOCK_SIZE
+    # rectangle pour le bouton, plus gros mais centré comme le texte
+    bouton_rect = texte_rect.scale_by(1.5)
+    bouton_rect.centerx = texte_rect.centerx
+    bouton_rect.centery = texte_rect.centery
     
+    while True:
+        
+        # ecriture sur l'écran
+        pygame.draw.rect(screen, GREEN, bouton_rect) 
+        screen.blit(texte_surf, texte_rect)
+    
+        # pour capturer les événements
+        for event in pygame.event.get():
+            # fermer la fenetre
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            # evenement click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: # bouton gauch
+                    (x, y) = event.pos # coordonnées du click
+                    # est ce que le click est dqns le buton reset
+                    if bouton_rect.collidepoint(x, y):
+                        return                    
+        
+        # affichage des grille
+        display()
+
+
+def set_text(t):
+    global text
+    text = t
     
 def display(only_user_grid=False):
     "Affichage des grille"
@@ -299,7 +341,14 @@ def display(only_user_grid=False):
     if only_user_grid == False: 
         screen.blit(grid2, grid2_rect)
     
-    # TODO: affichage d'un texte
+    # affichage d'un texte
+    texte_surf = font_text.render( text , True, WHITE) # surface texte
+    # rect pour plqcer le texte dqns lq grille
+    texte_rect = texte_surf.get_rect()
+    texte_rect.x = grid1_rect.left
+    texte_rect.y = grid1_rect.bottom + BLOCK_SIZE
+    # ecriture sur lq grille
+    screen.blit(texte_surf, texte_rect)
     
     # Affichage sur l'écran
     pygame.display.update()
@@ -341,12 +390,15 @@ if __name__ == "__main__":
          
         #     display()
             
-        boat = choose_boat()
-        print(boat)
+        #boat = choose_boat()
+        #print(boat)
+        reset()
+        
+        end()
         
     except:
         # fermer pygame en cas d'exception
         end()
         raise 
-    end()
+    
     
