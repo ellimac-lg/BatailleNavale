@@ -153,14 +153,13 @@ boat_nb = 0
 
 def choose_boat(l2=True, l3=True, l4=True):
     "let the user place a boat on grid1"
-    # TODO: liste fixe pour le moment
     
     ligne = 0
     colonne = 0
     longueur = 0
     horizontal = None
     
-    # rectangle a dessiner
+    # rectangles a dessiner pour le choix des bateaux
     rectv4 = pygame.Rect( grid2_rect.x, grid2_rect.y, BLOCK_SIZE, BLOCK_SIZE*4)
     rectv3 = pygame.Rect( grid2_rect.x+BLOCK_SIZE*2, grid2_rect.y, BLOCK_SIZE, BLOCK_SIZE*3)
     rectv2 = pygame.Rect( grid2_rect.x+BLOCK_SIZE*4, grid2_rect.y, BLOCK_SIZE, BLOCK_SIZE*2)
@@ -168,10 +167,10 @@ def choose_boat(l2=True, l3=True, l4=True):
     recth3 = pygame.Rect( grid2_rect.x, grid2_rect.y+BLOCK_SIZE*7, BLOCK_SIZE*3, BLOCK_SIZE)
     recth2 = pygame.Rect( grid2_rect.x, grid2_rect.y+BLOCK_SIZE*9, BLOCK_SIZE*2, BLOCK_SIZE)
     
+    ### Selection du bateau ###
     while True:
         
-
-        # dessine le rectangle sur la grille
+        # dessine les rectangles sur la grille
         if l4: pygame.draw.rect(screen, GREY, rectv4)
         if l3: pygame.draw.rect(screen, GREY, rectv3)
         if l2: pygame.draw.rect(screen, GREY, rectv2)
@@ -190,6 +189,7 @@ def choose_boat(l2=True, l3=True, l4=True):
                 if event.button == 1: # bouton gauch
                     (x, y) = event.pos # coordonnées du click
                     print(f"Click en x: {x} et y: {y}")
+                    # est ce qu'un des bateaux a été selectionné
                     if l4 and rectv4.collidepoint(x, y):
                         longueur = 4
                         horizontal = False
@@ -214,7 +214,7 @@ def choose_boat(l2=True, l3=True, l4=True):
                         longueur = 2
                         horizontal = True
                         selected_rect = recth2
-                 
+        # si un bateau a été selectionné passons à la suite
         if longueur != 0:
             break
         # affichage des grille
@@ -222,16 +222,17 @@ def choose_boat(l2=True, l3=True, l4=True):
         
     print(f"forme bateau longueur:{longueur} horizontal:{horizontal}")
         
+    ### Placement du bateau ###
     while True:
         
-
-        # dessine le rectangle sur la grille
+        # dessine les rectangles sur la grille
         if l4: pygame.draw.rect(screen, GREY, rectv4)
         if l3: pygame.draw.rect(screen, GREY, rectv3)
         if l2: pygame.draw.rect(screen, GREY, rectv2)
         if l4: pygame.draw.rect(screen, GREY, recth4)
         if l3: pygame.draw.rect(screen, GREY, recth3)
         if l2: pygame.draw.rect(screen, GREY, recth2) 
+        # entoure le bateau selectionné de rouge
         pygame.draw.rect(screen, RED, selected_rect, 2)
         
         # pour capturer les événements
@@ -250,20 +251,16 @@ def choose_boat(l2=True, l3=True, l4=True):
                     colonne = int((x-grid1_rect.x)/BLOCK_SIZE)
                     ligne = int((y-grid1_rect.y)/BLOCK_SIZE)
                     print(f"Click en ligne: {ligne} et colonne: {colonne}")
-                    # est ce que le clique est bien dans la grille 2
+        # est ce que le clique est bien dans la grille
         if (colonne>=1) and (colonne<=10) and (ligne>=1) and(ligne<=10):
             # terminé, on renvoie le résultat
             break
                  
-        # affichage des grille
+        # affichage
         display(only_user_grid=True)
         
+    # retourne le bateau selectionné et placé sur la grille
     return (ligne, colonne, longueur, horizontal)
-    # global boat_nb
-    # boat = TEST_BOAT[boat_nb % len(TEST_BOAT)]
-    # boat_nb = boat_nb + 1 
-    # display()
-    #return boat
     
 
 def choose_shoot():
@@ -320,7 +317,7 @@ def end():
 
 ### TESTS    
 
-def test():
+if __name__ == "__main__":
     init() 
     
     try:    
@@ -353,4 +350,3 @@ def test():
         raise 
     end()
     
-#test()

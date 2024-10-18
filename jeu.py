@@ -47,7 +47,6 @@ def in_boat (boat, ligne, colonne):
 
 def check_boat (new_boat, boats):
     "vérifie qu'un bateaux ne se chevauchent pas les autres et que sa longueur n'est pas déjà utilisée"
-    # TODO: a coder
     # check pas de croisements des bateaux
     new_boat_coords = boat_coordinates(new_boat)
     for each_boat in boats:
@@ -57,19 +56,68 @@ def check_boat (new_boat, boats):
                 if nbcoord == ebcoord:
                     return False
     
-    # check dans grid
-    (ligne, colonne, longueur, horizontal) = boat
+    # check que le bateau ne dépasse pas de la grille
+    (ligne, colonne, longueur, horizontal) = new_boat
     if horizontal:
-        if colonne -1 + longueur > 10:
+        if colonne -1 + longueur > 10: # dépassement à droite
             return False
     else:
-        if ligne -1 + longueur > 10:
+        if ligne -1 + longueur > 10: # dépassement en bas
             return False
-
-
-    # longueurs boats 2.3.4
+        
+    # si tout s'est bien passé jusque là le bateau est valide
     return True
 
+    
+
+################################
+### selection bateaux computer #
+################################
+
+
+def random_boat(longueur):
+    "creation aleatoire d'un bateau d'une certaine longueur"
+    ligne = random.randint(1, 10)
+    colonne = random.randint(1, 10)
+    horizontal = (random.randint(0, 1) == 1)
+    return (ligne, colonne, longueur, horizontal)
+    
+# creation aleatoire d'un bateau de longueur 4
+check = False
+# tant que le bateau créé n'est pas valide on re-essaie
+while check == False:
+    boat4 = random_boat(4) 
+    check = check_boat(boat4, computer_boats)
+    if check:
+        # si valide on ajoute le bateau dans la liste
+        computer_boats.append(boat4)
+        
+# creation aleatoire d'un bateau de longueur 3
+check = False
+# tant que le bateau créé n'est pas valide on re-essaie
+while check == False:
+    boat3 = random_boat(3)
+    check = check_boat(boat3, computer_boats)
+    if check:
+        # si valide on ajoute le bateau dans la liste
+        computer_boats.append(boat3)
+        
+# creation aleatoire d'un bateau de longueur 2
+check = False
+# tant que le bateau créé n'est pas valide on re-essaie
+while check == False:  
+    boat2 = random_boat(2)
+    check = check_boat(boat2, computer_boats)
+    if check:
+        # si valide on ajoute le bateau dans la liste
+        computer_boats.append(boat2)
+
+# on ne doit pas afficher les bateaux du computer
+# mais on le fait quand même pour debugguer
+if DEBUG:
+    affichage.draw_boat(affichage.COMPUTER, *boat4)
+    affichage.draw_boat(affichage.COMPUTER, *boat3)
+    affichage.draw_boat(affichage.COMPUTER, *boat2)
     
 #############################
 ### selection bateaux users #
@@ -80,11 +128,12 @@ l4=True
 
 while len(user_boats)<3 :
     # demande au joueur de placer un bateu sur la grille
-    boat = affichage.choose_boat(l2, l3, l4 )
+    boat = affichage.choose_boat(l2, l3, l4)
     print(boat)
     # vérifie si le bateau est valide
     check = check_boat (boat, user_boats)
     if check: # bateau valide
+        # il ne faut plus selectionner de bateau de cette longueur
         if boat[2] == 2:
             l2 = False
         if boat[2] == 3:
@@ -93,50 +142,11 @@ while len(user_boats)<3 :
             l4 = False
         user_boats.append(boat) # ajout dans la liste
         affichage.draw_boat(affichage.USER, *boat) # affichage
-        #affichage.display(only_user_grid=True)
-    #time.sleep(1)
+        
 
 ################################
-### selection bateaux computer #
+### La partie peut commencer   #
 ################################
-# TODO : randomiser
-
-def random_boat(longueur):
-    ligne = random.randint(1, 10)
-    colonne = random.randint(1, 10)
-    horizontal = (random.randint(0, 1) == 1)
-    return (ligne, colonne, longueur, horizontal)
-    
-check = False
-while check == False:
-    
-    boat4 = random_boat(4)
-    check = check_boat(boat4, computer_boats)
-    if check:
-        computer_boats.append(boat4)
-        
-check = False
-while check == False:
-    
-    boat3 = random_boat(3)
-    check = check_boat(boat3, computer_boats)
-    if check:
-        computer_boats.append(boat3)
-        
-check = False
-while check == False:
-    
-    boat2 = random_boat(2)
-    check = check_boat(boat2, computer_boats)
-    if check:
-        computer_boats.append(boat2)
-
-if DEBUG:
-    affichage.draw_boat(affichage.COMPUTER, *boat4)
-    affichage.draw_boat(affichage.COMPUTER, *boat3)
-    affichage.draw_boat(affichage.COMPUTER, *boat2)
-    
-
 
 # nombre de touchés
 user_hits = 0
@@ -240,6 +250,8 @@ try:
     # TODO afficher le gagant à l'écran
     
     # TODO: Reset button
+    
+    # TODO: afficher des textes au long du jeu
     
     affichage.end()
     
