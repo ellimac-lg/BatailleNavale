@@ -10,8 +10,6 @@ import pygame
 import sys
 
 # réglages affichage
-WINDOW_WIDTH = 1000
-WINDOW_HEIGHT = 600
 BLOCK_SIZE = 40
 
 # couleurs
@@ -33,6 +31,8 @@ pygame.init()
 clock = pygame.time.Clock()
 
 #surface de fenetre/taille
+WINDOW_WIDTH = BLOCK_SIZE*25
+WINDOW_HEIGHT = BLOCK_SIZE*15
 screen = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
 
 #variables globales
@@ -115,7 +115,7 @@ def draw_boat(player, ligne, colonne, longueur, horizontal=True):
     y = BLOCK_SIZE*ligne+1
     # longueur et largeur du bateau
     # à inverser selon que le bateau est vertical ou horizontal
-    if horizontal == True:
+    if horizontal:
         l = BLOCK_SIZE*longueur-2
         w = BLOCK_SIZE-2
     else:
@@ -141,13 +141,13 @@ def init():
     
     # afficher grid1
     grid1_rect = grid1.get_rect()
-    grid1_rect.x = 50
-    grid1_rect.y = 50
+    grid1_rect.x = BLOCK_SIZE
+    grid1_rect.y = BLOCK_SIZE
     
     # afficher grid2
     grid2_rect = grid2.get_rect()
-    grid2_rect.x = 550
-    grid2_rect.y = 50
+    grid2_rect.x = grid1_rect.right + BLOCK_SIZE
+    grid2_rect.y = BLOCK_SIZE
 
     text = ""
 
@@ -308,7 +308,8 @@ def reset():
     while True:
         
         # ecriture sur l'écran
-        pygame.draw.rect(screen, GREEN, bouton_rect) 
+        pygame.draw.rect(screen, GREEN, bouton_rect, 0, int(BLOCK_SIZE/4) )
+        pygame.draw.rect(screen, WHITE, bouton_rect, 2, int(BLOCK_SIZE/4) )
         screen.blit(texte_surf, texte_rect)
     
         # pour capturer les événements

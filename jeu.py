@@ -11,6 +11,29 @@ import random
 
 DEBUG = False
 
+MSG_DS_LEAU =  ["dans l'eau...",
+                "ah ça pour faire des vagues...",
+                "mais ya rien là !",
+                "peux mieux faire",
+                "plouf...",
+                "un coup pour rien",
+                "Splash stratégique !",
+                "un tir à la mer !",
+                "bof...",
+                "Eau mon Dieu",
+                "un plan qui tombe à l'eau",
+                "Eau rage ! Eau désespoir !",
+                "dommaaage...",
+                "presque mais.. non",
+                "des ptits ronds dans l'eau...",
+                "faudrait apprendre à viser..",
+                "raaaaté !",
+                "applique toi un peu..",
+                "à part faire peur aux poissons..",
+                "mon petit neveu ferait mieux..",
+                "marin d'eau douce va !",
+                "faudrait voir à gagner en précision.."]
+
 ### init
 
 # grille du joueur
@@ -139,7 +162,7 @@ try:
         ### selection bateaux users #
         #############################
         
-        affichage.set_text('Bienvenue, choisis et place tes navire  ')
+        affichage.set_text('Bienvenue, choisis et place tes navires ')
         
         l2=True
         l3=True
@@ -166,17 +189,6 @@ try:
         ### La partie peut commencer   #
         ################################
         
-        messages_dans_leau = ["dans l'eau...",
-                              "ah ça pour faire des vagues...",
-                              "mais ya rien là !",
-                              "peux mieux faire",
-                              "plouf...",
-                              "un coup pour rien",
-                              "splash stratégique !",
-                              "un tir à la mer !",
-                              "bof...",
-                              "Eau mon Dieu"]
-        
         # nombre de touchés
         user_hits = 0
         computer_hits = 0
@@ -192,7 +204,7 @@ try:
             print("### User joue ###")
             already_played = True
             # tant que ce n'est pas un nouveau coup...
-            while already_played == True:
+            while already_played:
                 # récupère le coup du user
                 coup = affichage.choose_shoot()
                 print(coup)
@@ -210,7 +222,7 @@ try:
             for boat in computer_boats:
                 # vérifie si bateau touché
                 hit = in_boat(boat, coup[0], coup[1]) 
-                if hit == True: # touché
+                if hit: # touché
                     affichage.set_text('Touché !') 
                     user_hits = user_hits + 1 # arrivé à 9 c'est gagné
                     # vérifie si coulé
@@ -219,7 +231,7 @@ try:
                     for coord in coordinates:
                         if computer_grid [coord[0]-1][coord[1]-1] == 'O':
                             sinked = False
-                    if sinked == True:
+                    if sinked:
                         affichage.set_text('Touché Coulé ! ') 
                         # si le bateau est coulé on l 'affiche
                         affichage.draw_boat(affichage.COMPUTER, *boat)
@@ -227,7 +239,7 @@ try:
                         for coord in coordinates:
                             affichage.draw_shoot(affichage.COMPUTER, coord[0], coord[1], True)
                     break
-                else: affichage.set_text(messages_dans_leau[random.randint(0, len(messages_dans_leau)-1)])
+                else: affichage.set_text(MSG_DS_LEAU[random.randint(0, len(MSG_DS_LEAU)-1)])
             # afficher le coup sur la grille du computer (en rouge si c'est un hit)
             affichage.draw_shoot(affichage.COMPUTER, coup[0], coup[1], hit)
             
@@ -239,7 +251,7 @@ try:
             print("### Computer joue ###")
             already_played = True
             # tant que ce n'est pas un nouveau coup...
-            while already_played == True:
+            while already_played:
                 # le computer joue qu hasard coup 
                 coup = (random.randint(1, 10) , random.randint(1, 10))
                 print(coup)
@@ -256,7 +268,7 @@ try:
             for boat in user_boats:
                 # vérifie si bateau touché
                 hit = in_boat(boat, coup[0], coup[1]) 
-                if hit == True:
+                if hit:
                     affichage.set_text('Aïe ! ') 
                     computer_hits = computer_hits  + 1 # arrivé à 9 c'est gagné
                     # vérifie si coulé
@@ -265,7 +277,7 @@ try:
                     for coord in coordinates:
                         if user_grid [coord[0]-1][coord[1]-1] == 'O':
                             sinked = False
-                    if sinked == True:
+                    if sinked:
                         affichage.set_text('Aïe Aïe Aïe !! ') 
                     break
             # afficher le coup sur la grille du computer (en rouge si c'est un hit)
@@ -274,7 +286,7 @@ try:
             
         # vérifie qui a gagné
         if user_hits == 9:
-            affichage.set_text('Félicitations ! tu as gagné ! ')
+            affichage.set_text('Félicitations ! Tu as gagné ! ')
         if computer_hits == 9:
             affichage.set_text('Dommage, tu as perdu ... ')
         affichage.display()
