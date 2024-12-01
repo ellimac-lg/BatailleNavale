@@ -21,7 +21,7 @@ GREY = (120,120,120)
 GREEN = (1, 215, 88)
 
 # music
-MP4_FILE = "Apoxode_Electric.mp3"
+MP4_FILE = "music_chill.mp3"
 
 # designation des joueurs
 USER = "user"
