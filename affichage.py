@@ -20,12 +20,21 @@ RED = (255,0,0)
 GREY = (120,120,120)
 GREEN = (1, 215, 88)
 
+# music
+MP4_FILE = "Apoxode_Electric.mp3"
+
 # designation des joueurs
 USER = "user"
 COMPUTER = "COMPUTER"
 
 #initialisation
 pygame.init()
+
+# Load and play background music
+pygame.mixer.init()
+pygame.mixer.music.load(MP4_FILE)
+pygame.mixer.music.play(loops=-1)
+
 
 # Setup the clock for a decent framerate
 clock = pygame.time.Clock()
